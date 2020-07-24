@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string> 
+#include <sstream>
 
 using namespace std;
 
@@ -34,7 +35,8 @@ int busqPos();
 void registrarUsuario();
 
 //Funciones para la busqueda y muestra
-bool usrEncontrado();
+bool usrEncontrado(string);
+int busqPosUsuario(string);
 void mostrarUsuario();
 
 int main(){
@@ -51,8 +53,7 @@ int main(){
         }
 
         if(opc == 2){
-            //mostrarUsuario();
-            cout<<"This is working ;)"<<endl;
+            mostrarUsuario();
             continue;
         }
 
@@ -111,6 +112,7 @@ void registrarCancionesUsuario(string nombre){
         cout<<"Ingresa el tamaño en KB de la cancion: ";
         cin >> usuarios[pos].canciones[i].tamKB;
         cin.ignore();
+        cout<<"\n";
     }
 }
 
@@ -118,11 +120,67 @@ void registrarUsuario(){
     string nombre;
     cout<<"Ingresa tu nombre de usuario: ";
     getline(cin,nombre);
+    cout<<"\n";
 
     if(usrExiste(nombre)){
+        cout<<"Ya existe un usuario con ese nombre registrado ;(\n"<<endl;
         registrarUsuario();
     }
     else{
             registrarCancionesUsuario(nombre);
+    }
+}
+
+int busqPosUsuario(string nombre){
+    for(int i=0;i<CANT_MAX_USUARIOS;i++){
+        if(usuarios[i].nombreUsuario == nombre){
+            return i;
+        }
+    }
+    return -1;
+}
+
+bool usrEncontrado(string nombre){
+    bool encontrado = false;
+    for(int i=0;i<CANT_MAX_USUARIOS;i++){
+        if(usuarios[i].nombreUsuario == nombre){
+            encontrado = true;
+        }
+    }
+    return encontrado;
+}
+
+void mostrarUsuario(){
+    string nombre;
+    int index;
+    cout<<"\nQue usuario desea buscar?: ";
+    getline(cin,nombre);
+
+    if(usrEncontrado(nombre)){
+        index = busqPosUsuario(nombre);
+        for(int i=0;i<CANT_MAX_CANCIONES;i++){
+            cout<<"\nNombre del artista: "<<usuarios[index].canciones[i].nombreArtista<<endl;
+            cout<<"Nombre del titulo: "<<usuarios[index].canciones[i].titulo<<endl;
+            cout<<"Tamanio en KB: "<<usuarios[index].canciones[i].tamKB<<endl;
+        }
+    }
+    else{
+        int opc;
+        cout<<"\nEl usuario que indico no existe en nuestros registros ;("<<endl;
+        cout<<"Desea buscar otro usuario?\n"<<endl;
+        cout<<"\t(1) SI"<<endl;
+        cout<<"\t(2) NO"<<endl;
+        do{
+            cout<<"Opcion: ";
+            cin>>opc;
+            cin.ignore();
+        }while(opc != 1 && opc != 2);
+
+        if(opc == 1){    
+            mostrarUsuario();
+        }
+        else{
+            cout<<"Okay!"<<endl;
+        }
     }
 }
