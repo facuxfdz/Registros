@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string> 
-#include <sstream>
 
 using namespace std;
 
@@ -37,27 +36,36 @@ void registrarUsuario();
 //Funciones para la busqueda y muestra
 bool usrEncontrado(string);
 int busqPosUsuario(string);
+void usuarioNoExiste();
 void mostrarUsuario();
+
+bool esNumero(string); //Funcion para validar los inputs del usuario
 
 int main(){
 
     inicReg(); //Inicializo el registro de usuarios
-    int opc;
+    string opc;
+    int opci;
     do{
         mostrarMenu();
-        cin>>opc;
-        cin.ignore();
-        if(opc == 1){
+        getline(cin,opc);
+        if(!esNumero(opc)){ //Valido que la entrada del usuario sea un int
+            cout<<"Debe ingresar un valor numerico!"<<endl;
+            continue;
+        }
+        //Una vez que ingreso el valor correcto procedo a transformar la entrada a dato de tipo int
+        opci = stoi(opc);
+        if(opci == 1){
             registrarUsuario();
             continue;
         }
 
-        if(opc == 2){
+        if(opci == 2){
             mostrarUsuario();
             continue;
         }
 
-    }while( (opc != 1 || opc != 2) && (opc != 3) );
+    }while( (opci != 1 || opci != 2) && (opci != 3) ); //Repito hasta que la opcion elegida sea 3
     
     cout<<"Nos vemos!\n"<<endl;
     return 0;
@@ -105,13 +113,23 @@ void registrarCancionesUsuario(string nombre){
 
     usuarios[pos].nombreUsuario = nombre;
     for(int i=0;i<CANT_MAX_CANCIONES;i++){
+        string tam;
         cout<<"Okay "<<usuarios[pos].nombreUsuario<<"! Ingresa el nombre del Artista: ";
         getline(cin,usuarios[pos].canciones[i].nombreArtista);
         cout<<"Ingresa el titulo de la cancion: ";
         getline(cin,usuarios[pos].canciones[i].titulo);
-        cout<<"Ingresa el tamaño en KB de la cancion: ";
-        cin >> usuarios[pos].canciones[i].tamKB;
-        cin.ignore();
+        while(true){    
+            cout<<"Ingresa el tamaño en KB de la cancion: ";
+            getline(cin,tam);
+            if(!esNumero(tam)){
+                cout<<"El valor ingresado debe ser numerico!"<<endl;
+                continue;
+            }
+            else{
+                break;
+            }
+        }
+        usuarios[pos].canciones[i].tamKB = stoi(tam);
         cout<<"\n";
     }
 }
@@ -150,6 +168,13 @@ bool usrEncontrado(string nombre){
     return encontrado;
 }
 
+void usuarioNoExiste(){
+    cout<<"\nEl usuario que indico no existe en nuestros registros ;("<<endl;
+    cout<<"Desea buscar otro usuario?\n"<<endl;
+    cout<<"\t(1) SI"<<endl;
+    cout<<"\t(2) NO"<<endl;
+}
+
 void mostrarUsuario(){
     string nombre;
     int index;
@@ -157,6 +182,7 @@ void mostrarUsuario(){
     getline(cin,nombre);
 
     if(usrEncontrado(nombre)){
+
         index = busqPosUsuario(nombre);
         for(int i=0;i<CANT_MAX_CANCIONES;i++){
             cout<<"\nNombre del artista: "<<usuarios[index].canciones[i].nombreArtista<<endl;
@@ -165,22 +191,36 @@ void mostrarUsuario(){
         }
     }
     else{
-        int opc;
-        cout<<"\nEl usuario que indico no existe en nuestros registros ;("<<endl;
-        cout<<"Desea buscar otro usuario?\n"<<endl;
-        cout<<"\t(1) SI"<<endl;
-        cout<<"\t(2) NO"<<endl;
+
+        usuarioNoExiste();
+        string opc;
+        int opci;
+
         do{
             cout<<"Opcion: ";
-            cin>>opc;
-            cin.ignore();
-        }while(opc != 1 && opc != 2);
+            getline(cin,opc);
+            if(!esNumero(opc)){ //Valido que la entrada del usuario sea int
+                cout<<"Debe ingresar un valor numerico!"<<endl;
+                continue;
+            }
+            opci = stoi(opc);
+        }while(opci != 1 && opci != 2);
 
-        if(opc == 1){    
+        if(opci == 1){    
             mostrarUsuario();
         }
         else{
             cout<<"Okay!"<<endl;
         }
     }
+}
+
+bool esNumero(string cadena){
+    bool esNum = true;
+    for(int i=0;i<cadena.size();i++){
+        if(cadena[i] < 48 || cadena[i] > 57){
+            esNum = false;
+        }
+    }
+    return esNum;
 }
