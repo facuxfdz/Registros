@@ -241,7 +241,7 @@ void mostrarUsuario(){
 bool esNumero(string cadena){
     bool esNum = true;
     for(int i=0;i<cadena.size();i++){
-        if(cadena[i] < 48 || cadena[i] > 57){
+        if(cadena[i] < 48 || cadena[i] > 57){ //Verifico que cada caracter este entre 0 y 9 del ASCII
             esNum = false;
         }
     }
