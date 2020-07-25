@@ -165,6 +165,9 @@ void registrarUsuario(){
     }
 }
 
+
+//Funciones para mostrar los datos del usuario
+
 int busqPosUsuario(string nombre){
     for(int i=0;i<CANT_MAX_USUARIOS;i++){
         if(usuarios[i].nombreUsuario == nombre){
