@@ -6,6 +6,10 @@ using namespace std;
 #define CANT_MAX_CANCIONES 3
 #define CANT_MAX_USUARIOS 10
 
+/*Defino dos estructuras:
+    usuario: Guarda el nombre del usuario y las 3 canciones que haya ingresado
+    cancionUsuario: Guarda los datos de cada cancion ingresada por el usuario
+*/
 struct 
 {
     string nombreArtista;
@@ -44,17 +48,19 @@ bool esNumero(string); //Funcion para validar los inputs del usuario
 int main(){
 
     inicReg(); //Inicializo el registro de usuarios
+
     string opc;
     int opci;
     do{
         mostrarMenu();
         getline(cin,opc);
+
         if(!esNumero(opc)){ //Valido que la entrada del usuario sea un int
-            cout<<"Debe ingresar un valor numerico!"<<endl;
+            cout<<"\nDebe ingresar un valor numerico!"<<endl;
             continue;
         }
-        //Una vez que ingreso el valor correcto procedo a transformar la entrada a dato de tipo int
-        opci = stoi(opc);
+
+        opci = stoi(opc); //Paso el string a int
         if(opci == 1){
             registrarUsuario();
             continue;
@@ -65,7 +71,7 @@ int main(){
             continue;
         }
 
-    }while( (opci != 1 || opci != 2) && (opci != 3) ); //Repito hasta que la opcion elegida sea 3
+    }while( (opci != 1 || opci != 2) && (opci != 3) ); //Repito hasta que la opcion elegida sea 3(SALIR)
     
     cout<<"Nos vemos!\n"<<endl;
     return 0;
@@ -96,6 +102,7 @@ bool usrExiste(string nombre){
             encontrado = true;
         }
     }
+
     return encontrado;
 }
 
@@ -105,37 +112,46 @@ int busqPos(){
             return i;
         }
     }
+
     return -1;
 }
 
 void registrarCancionesUsuario(string nombre){
     int pos = busqPos(); //Defino el lugar a partir del cual registrar el usuario
+    
+    if(pos >= 0){//Si hay lugar para seguir metiendo usuarios procedo
+        usuarios[pos].nombreUsuario = nombre;
 
-    usuarios[pos].nombreUsuario = nombre;
-    for(int i=0;i<CANT_MAX_CANCIONES;i++){
-        string tam;
-        cout<<"Okay "<<usuarios[pos].nombreUsuario<<"! Ingresa el nombre del Artista: ";
-        getline(cin,usuarios[pos].canciones[i].nombreArtista);
-        cout<<"Ingresa el titulo de la cancion: ";
-        getline(cin,usuarios[pos].canciones[i].titulo);
-        while(true){    
-            cout<<"Ingresa el tamaño en KB de la cancion: ";
-            getline(cin,tam);
-            if(!esNumero(tam)){
-                cout<<"El valor ingresado debe ser numerico!"<<endl;
-                continue;
+        for(int i=0;i<CANT_MAX_CANCIONES;i++){
+            string tam;
+            cout<<"Okay "<<usuarios[pos].nombreUsuario<<"! Ingresa el nombre del Artista "<< i+1 <<": ";
+            getline(cin,usuarios[pos].canciones[i].nombreArtista);
+            cout<<"Ingresa el titulo de la cancion "<< i+1<<": ";
+            getline(cin,usuarios[pos].canciones[i].titulo);
+            while(true){    
+                cout<<"Ingresa el tamaño en KB de la cancion "<< i+1 <<": ";
+                getline(cin,tam);
+                if(!esNumero(tam)){
+                    cout<<"El valor ingresado debe ser numerico!\n"<<endl;
+                    continue;
+                }
+                else{
+                    break;
+                }
             }
-            else{
-                break;
-            }
+            usuarios[pos].canciones[i].tamKB = stoi(tam);
+            cout<<"\n";
         }
-        usuarios[pos].canciones[i].tamKB = stoi(tam);
-        cout<<"\n";
+        cout<<"Todo registrado correctamente!\n"<<endl;
+    }
+    else{
+        cout<<"Ya se han ingresado todos los usuarios posibles :D"<<endl;
     }
 }
 
 void registrarUsuario(){
     string nombre;
+
     cout<<"Ingresa tu nombre de usuario: ";
     getline(cin,nombre);
     cout<<"\n";
@@ -155,7 +171,8 @@ int busqPosUsuario(string nombre){
             return i;
         }
     }
-    return -1;
+
+    return -1; //Nunca va a ser retornado ya que si esta funcion tiene lugar es porque usrEncontrado() fue true
 }
 
 bool usrEncontrado(string nombre){
@@ -165,6 +182,7 @@ bool usrEncontrado(string nombre){
             encontrado = true;
         }
     }
+
     return encontrado;
 }
 
@@ -184,11 +202,13 @@ void mostrarUsuario(){
     if(usrEncontrado(nombre)){
 
         index = busqPosUsuario(nombre);
+        cout<<"\nOkay "<<nombre<<"! Estas son tus canciones guardadas:\n"<<endl;
         for(int i=0;i<CANT_MAX_CANCIONES;i++){
             cout<<"\nNombre del artista: "<<usuarios[index].canciones[i].nombreArtista<<endl;
             cout<<"Nombre del titulo: "<<usuarios[index].canciones[i].titulo<<endl;
             cout<<"Tamanio en KB: "<<usuarios[index].canciones[i].tamKB<<endl;
         }
+        cout<<"\n"<<endl;
     }
     else{
 
@@ -210,7 +230,7 @@ void mostrarUsuario(){
             mostrarUsuario();
         }
         else{
-            cout<<"Okay!"<<endl;
+            cout<<"Okay!\n"<<endl;
         }
     }
 }
@@ -222,5 +242,6 @@ bool esNumero(string cadena){
             esNum = false;
         }
     }
+
     return esNum;
 }
